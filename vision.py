@@ -23,10 +23,13 @@ def loop():
     sink = cs.getVideo(camera=camera)
 
     nt = NetworkTables.getTable('vision')
+    entry = nt.getEntry('info')
 
     while True:
         frame = np.zeros(shape=(frame_height, frame_width, 3), dtype=np.uint8)
-        process(sink.grabFrame(frame)[1])
+        info = process(sink.grabFrame(frame)[1])
+        info = np.array(info).flatten()
+        entry.setNumberArray(info)
 
 
 def process(frame):
@@ -52,7 +55,7 @@ def process(frame):
 
     output = []
     # only proceed if at least one contour was found
-    if len(contours) > 0:
+    if contours:
         # find the largest contour in the mask, then use
         # it to compute the minimum enclosing circle and
         # centroid
@@ -79,18 +82,8 @@ def process(frame):
     end_time = time.time() - start_time
     output.append(end_time)
 
-    send(output)
+    return output
 
-
-def send(info):
-        """Sends the cube infomation over networktables
-        
-        Args:
-            info (array): The cube info to be sent over networktables
-        """
-        info = np.array(info)
-        info.flatten()
-        nt.putNumberArray("/", info)
 
 if __name__ == '__main__':
     loop()
