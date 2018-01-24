@@ -25,7 +25,7 @@ def loop():
     NetworkTables.initialize(server="roborio-4774-frc.local")
     nt = NetworkTables.getTable('/vision')
     entry = nt.getEntry('info')
-
+    
     while True:
         frame = np.zeros(shape=(frame_height, frame_width, 3), dtype=np.uint8)
         info = process(sink.grabFrame(frame)[1])
@@ -37,8 +37,10 @@ def loop():
 def process(frame):
     start_time = time.time()
 
-    # blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+#     blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+    bgr = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+    hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+
 
     # construct a mask for the colour "yellow", then perform
     # a series of dilations and erosions to remove any small
@@ -46,7 +48,6 @@ def process(frame):
     mask = cv2.inRange(hsv, yellowLower, yellowUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
-
     # find contours in the mask and initialize the current
     # (x, y) center of the ball
     contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
@@ -54,7 +55,7 @@ def process(frame):
     center = None
     output = None
     angle = None
-
+    
     output = []
     # only proceed if at least one contour was found
     if contours:
@@ -80,7 +81,7 @@ def process(frame):
                 angle = math.atan(position / focal_length) * (180 / math.pi)
 
                 output.extend([angle, position, cv2.contourArea(contour)])
-                
+
     end_time = time.time() - start_time
     output.append(end_time)
 
