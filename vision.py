@@ -22,7 +22,8 @@ def loop():
     camera.setVideoMode(cscore.VideoMode.PixelFormat.kYUYV, 320, 240, 60)
     sink = cs.getVideo(camera=camera)
 
-    nt = NetworkTables.getTable('vision')
+    NetworkTables.initialize(server="roborio-4774-frc.local")
+    nt = NetworkTables.getTable('/vision')
     entry = nt.getEntry('info')
 
     while True:
@@ -30,6 +31,7 @@ def loop():
         info = process(sink.grabFrame(frame)[1])
         info = np.array(info).flatten()
         entry.setNumberArray(info)
+        NetworkTables.flush()
 
 
 def process(frame):
