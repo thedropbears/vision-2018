@@ -8,9 +8,9 @@ import math
 yellowLower = (15, 100, 100)
 yellowUpper = (35, 255, 255)
 
-min_radius = 30
 frame_width = 320
 frame_height = 240
+min_radius = frame_height * 0.125
 fov = 75
 focal_length = 208.5
 fps = 50
