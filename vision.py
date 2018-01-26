@@ -77,8 +77,8 @@ def process(frame):
 
                 distance = width - mask_width / 2
                 # convert x-axis location to -1 to 1
-                position = -distance / (mask_width / 2)
-                angle = math.atan(position / focal_length)
+                #position = -distance / (mask_width / 2)
+                angle = math.atan(-distance / focal_length)
 
                 output.extend([angle, position, cv2.contourArea(contour)])
 
