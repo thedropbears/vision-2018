@@ -56,6 +56,7 @@ def process(frame):
 
     # find contours in the mask and initialize the current
     # x center of the cube
+
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)[-2]
 
@@ -79,6 +80,7 @@ def process(frame):
 
         # only proceed if the radius meets a minimum size
             if contour_area > min_area  and radius > min_radius:
+
                 x = int(M["m10"] / M["m00"])
 
                 distance = x - mask_width / 2
