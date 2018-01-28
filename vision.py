@@ -47,8 +47,15 @@ def process(frame):
     mask = cv2.inRange(hsv, yellowLower, yellowUpper)
     cv2.erode(mask, None, mask, iterations=2)
     cv2.dilate(mask, None, mask, iterations=2)
+
+    # find resolution of mask
+    mask_height, mask_width = mask.shape
+
+    min_radius = mask_height * 0.0625
+    min_area = mask_width * 0.0625
+
     # find contours in the mask and initialize the current
-    # (x, y) center of the ball
+    # x center of the cube
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)[-2]
 
@@ -72,11 +79,9 @@ def process(frame):
 
         # only proceed if the radius meets a minimum size
             if contour_area > min_area  and radius > min_radius:
-                width, height = center = (
-                    int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-                mask_height, mask_width = mask.shape  # find resolution of mask
+                x = int(M["m10"] / M["m00"])
 
-                distance = width - mask_width / 2
+                distance = x - mask_width / 2
                 # convert x-axis location to -1 to 1
                 #position = -distance / (mask_width / 2)
                 angle = math.atan(-distance / focal_length)
