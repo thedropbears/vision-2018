@@ -35,7 +35,7 @@ def loop():
 
 
 def process(frame):
-    start_time = time.time()
+    start_time = time.monotonic()
 
 #     blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     bgr = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
@@ -82,7 +82,7 @@ def process(frame):
 
                 output.extend([angle, position, cv2.contourArea(contour)])
 
-    end_time = time.time() - start_time
+    end_time = time.monotonic() - start_time
     output.append(end_time)
 
     return output
