@@ -44,8 +44,8 @@ def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
     mask = cv2.inRange(hsv, lower, upper)
-    cv2.erode(mask, None, mask, iterations=2)
-    cv2.dilate(mask, None, mask, iterations=2)
+    cv2.erode(mask, None, mask)
+    cv2.dilate(mask, None, mask)
 
     # find resolution of mask/image
     height, width = mask.shape
@@ -57,7 +57,7 @@ def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
     # x center of the cube
 
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)[-2]
+                                cv2.CHAIN_APPROX_SIMPLE)[1]
 
     output = []
     # only proceed if at least one contour was founda
