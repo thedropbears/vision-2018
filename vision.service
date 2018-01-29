@@ -1,0 +1,10 @@
+[Unit]
+Description=cscore vision code
+
+[Service]
+User=vision
+WorkingDirectory=/home/vision
+ExecStart=/usr/bin/python3 -m cscore --team=4774 vision.py
+
+[Install]
+WantedBy=multi-user.target
