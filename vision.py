@@ -24,6 +24,8 @@ def main():
 
     nt = NetworkTables.getTable('/vision')
     entry = nt.getEntry('info')
+    write_entry = nt.getEntry('write')
+    write_entry.setBoolean(False)
 
     # Allocating memory is expensive. Preallocate arrays for the camera images.
     frame = np.zeros(shape=(240, 320, 3), dtype=np.uint8)
@@ -44,6 +46,10 @@ def main():
             NetworkTables.flush()
 
             source.putFrame(mask)
+
+            if write_entry.getBoolean(False):
+                cv2.imwrite('%.2f.jpg' % time, frame)
+                write_entry.setBoolean(False)
 
 
 def process(frame: np.ndarray, mask: np.ndarray = None, hsv: np.ndarray = None, *,
