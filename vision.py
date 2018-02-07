@@ -75,13 +75,14 @@ def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
 
             # only proceed if the radius meets a minimum size
             if contour_area > min_area and radius > min_radius:
-                x = M["m10"] / M["m00"]
+                x, y = int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])
 
-                distance = x - width / 2
-                # convert x-axis location to -1 to 1
-                position = -distance / (width / 2)
-                angle = math.atan(-distance / focal_length)
+                distance_x = x - width / 2
+                distance_y = y - height / 2
 
-                output.extend([angle, position, contour_area])
+                angle_x = math.atan(-distance_x / focal_length)
+                angle_y = math.atan(-distance_y / focal_length)
+
+                output.extend([angle_x, angle_y])
 
     return output
