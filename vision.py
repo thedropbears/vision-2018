@@ -12,6 +12,9 @@ def main():
     cs = cscore.CameraServer.getInstance()
     camera = cs.startAutomaticCapture()  # TODO: specify path if multiple cameras
     camera.setVideoMode(cscore.VideoMode.PixelFormat.kYUYV, 320, 240, 50)
+    camera.getProperty('vertical_flip').set(True)
+    camera.getProperty('horizontal_flip').set(True)
+    camera.getProperty('gain_automatic').set(False)
     sink = cs.getVideo(camera=camera)
 
     nt = NetworkTables.getTable('/vision')
@@ -81,7 +84,7 @@ def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
                 distance_y = y - height / 2
 
                 angle_x = math.atan(-distance_x / focal_length)
-                angle_y = math.atan(-distance_y / focal_length)
+                angle_y = (math.atan(-distance_y / focal_length)) + 1.5708
 
                 output.extend([angle_x, angle_y])
 
