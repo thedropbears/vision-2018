@@ -53,7 +53,6 @@ def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
     # find resolution of mask/image
     height, width = mask.shape
 
-    min_radius = height * min_radius_prop
     min_area = width * min_area_prop
 
     # find contours in the mask and initialize the current
@@ -73,18 +72,17 @@ def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
         for contour in contours:
             contour_area = cv2.contourArea(contour)
 
-            ((x, y), radius) = cv2.minEnclosingCircle(contour)
             M = cv2.moments(contour)
 
-            # only proceed if the radius meets a minimum size
-            if contour_area > min_area and radius > min_radius:
-                x, y = int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])
+            # only proceed if the contours are big enough
+            if contour_area > min_area:
+                x, y = M["m10"] / M["m00"], M["m01"] / M["m00"]
 
                 distance_x = x - width / 2
                 distance_y = y - height / 2
 
-                angle_x = math.atan(-distance_x / focal_length)
-                angle_y = (math.atan(-distance_y / focal_length)) + 1.5708
+                angle_x = math.atan2(-distance_x, focal_length)
+                angle_y = math.atan2(-distance_y, focal_length)
 
                 output.extend([angle_x, angle_y])
 
