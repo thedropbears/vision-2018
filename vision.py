@@ -75,18 +75,20 @@ def process(frame, mask=None, hsv=None,
         for contour in contours:
             contour_area = cv2.contourArea(contour)
 
-            M = cv2.moments(contour)
-
             # only proceed if the contours are big enough
-            if contour_area > min_area:
-                x, y = M["m10"] / M["m00"], M["m01"] / M["m00"]
+            # since the contours are sorted, we can stop once we find one too small
+            if contour_area <= min_area:
+                break
 
-                distance_x = x - width / 2
-                distance_y = y - height / 2
+            M = cv2.moments(contour)
+            x, y = M["m10"] / M["m00"], M["m01"] / M["m00"]
 
-                angle_x = math.atan2(-distance_x, focal_length)
-                angle_y = math.atan2(-distance_y, focal_length)
+            distance_x = x - width / 2
+            distance_y = y - height / 2
 
-                output.extend([angle_x, angle_y])
+            angle_x = math.atan2(-distance_x, focal_length)
+            angle_y = math.atan2(-distance_y, focal_length)
+
+            output.extend([angle_x, angle_y])
 
     return output
