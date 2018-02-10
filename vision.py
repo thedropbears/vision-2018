@@ -12,9 +12,13 @@ def main():
     cs = cscore.CameraServer.getInstance()
     camera = cs.startAutomaticCapture()  # TODO: specify path if multiple cameras
     camera.setVideoMode(cscore.VideoMode.PixelFormat.kYUYV, 320, 240, 50)
+
     camera.getProperty('vertical_flip').set(True)
     camera.getProperty('horizontal_flip').set(True)
     camera.getProperty('gain_automatic').set(False)
+    camera.getProperty('gain').set(30)
+    camera.getProperty('saturation').set(32)
+
     sink = cs.getVideo(camera=camera)
     source = cs.putVideo('cv', 320, 240)
 
