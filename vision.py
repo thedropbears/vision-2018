@@ -91,6 +91,9 @@ def process(frame: np.ndarray, mask: np.ndarray = None, hsv: np.ndarray = None, 
         # sort the contours in descending order of size
         contours.sort(key=cv2.contourArea, reverse=True)
 
+        half_width = width / 2
+        half_height = height / 2
+
         for contour in contours:
             contour_area = cv2.contourArea(contour)
 
@@ -103,8 +106,8 @@ def process(frame: np.ndarray, mask: np.ndarray = None, hsv: np.ndarray = None, 
             M = cv2.moments(contour)
             x, y = M["m10"] / M["m00"], M["m01"] / M["m00"]
 
-            distance_x = x - width / 2
-            distance_y = y - height / 2
+            distance_x = x - half_width
+            distance_y = y - half_height
 
             angle_x = math.atan2(-distance_x, focal_length)
             angle_y = math.atan2(-distance_y, focal_length)
