@@ -46,10 +46,27 @@ def main():
             source.putFrame(mask)
 
 
-def process(frame, mask=None, hsv=None,
+def process(frame: np.ndarray, mask: np.ndarray = None, hsv: np.ndarray = None, *,
             lower=(20, 125, 125), upper=(35, 255, 255),
             min_area_prop=1/24, focal_length=208.5):
+    """Find cubes using our vision algorithm.
 
+    Args
+    ----
+    frame: the image to process
+    mask: optional array to store threshold binary image; must be same resolution
+    hsv: optional array to store HSV-converted image; must be same resolution
+
+    lower (Tuple[int, int, int]): HSV lower bound
+    upper (Tuple[int, int, int]): HSV upper bound
+    min_area_prop (float): minimum size in proportion to the image
+    focal_length (float): focal length of camera
+
+    Returns
+    -------
+    flat list of azimuths and zeniths (interleaved) of cubes detected
+
+    """
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV, dst=hsv)
 
     # construct a mask for the colour "yellow", then perform
@@ -62,10 +79,8 @@ def process(frame, mask=None, hsv=None,
     # find resolution of mask/image
     height, width = mask.shape
 
+    # calculate the minimum contour size based on image size
     min_area = height * width * min_area_prop
-
-    # find contours in the mask and initialize the current
-    # x center of the cube
 
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)[1]
@@ -73,9 +88,7 @@ def process(frame, mask=None, hsv=None,
     output = []
     # only proceed if at least one contour was founda
     if contours:
-        # find the largest contour in the mask, then use
-        # it to compute the minimum enclosing circle and
-        # centroid
+        # sort the contours in descending order of size
         contours.sort(key=cv2.contourArea, reverse=True)
 
         for contour in contours:
@@ -86,6 +99,7 @@ def process(frame, mask=None, hsv=None,
             if contour_area <= min_area:
                 break
 
+            # find the centre of the contour
             M = cv2.moments(contour)
             x, y = M["m10"] / M["m00"], M["m01"] / M["m00"]
 
