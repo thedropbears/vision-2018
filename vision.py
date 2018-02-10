@@ -43,8 +43,8 @@ def main():
 
 
 def process(frame, mask=None, hsv=None,
-            lower=(15, 100, 100), upper=(35, 255, 255),
-            min_area_prop=0.0625, focal_length=208.5):
+            lower=(20, 125, 125), upper=(35, 255, 255),
+            min_area_prop=1/24, focal_length=208.5):
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV, dst=hsv)
 
