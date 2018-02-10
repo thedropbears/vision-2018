@@ -58,7 +58,7 @@ def process(frame, mask=None, hsv=None,
     # find resolution of mask/image
     height, width = mask.shape
 
-    min_area = width * min_area_prop
+    min_area = height * width * min_area_prop
 
     # find contours in the mask and initialize the current
     # x center of the cube
