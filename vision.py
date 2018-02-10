@@ -16,6 +16,7 @@ def main():
     camera.getProperty('horizontal_flip').set(True)
     camera.getProperty('gain_automatic').set(False)
     sink = cs.getVideo(camera=camera)
+    source = cs.putVideo('cv', 320, 240)
 
     nt = NetworkTables.getTable('/vision')
     entry = nt.getEntry('info')
@@ -28,8 +29,8 @@ def main():
     while True:
         time, frame = sink.grabFrame(frame)
         if time == 0:
-            # TODO: handle error
-            pass
+            # error reading the frame, report to CV output stream
+            source.notifyError(sink.getError())
         else:
             start_time = monotonic()
             info = process(frame, mask, hsv)
@@ -37,6 +38,8 @@ def main():
 
             entry.setNumberArray(info)
             NetworkTables.flush()
+
+            source.putFrame(mask)
 
 
 def process(frame, mask=None, hsv=None,
