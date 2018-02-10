@@ -20,8 +20,10 @@ def main():
     nt = NetworkTables.getTable('/vision')
     entry = nt.getEntry('info')
 
-    # Allocating memory is expensive. Preallocate an array for the camera image.
+    # Allocating memory is expensive. Preallocate arrays for the camera images.
     frame = np.zeros(shape=(240, 320, 3), dtype=np.uint8)
+    mask = np.zeros(shape=(240, 320), dtype=np.uint8)
+    hsv = np.zeros(shape=(240, 320, 3), dtype=np.uint8)
 
     while True:
         time, frame = sink.grabFrame(frame)
@@ -30,25 +32,26 @@ def main():
             pass
         else:
             start_time = monotonic()
-            info = process(frame)
+            info = process(frame, mask, hsv)
             info.append(monotonic() - start_time)
 
             entry.setNumberArray(info)
             NetworkTables.flush()
 
 
-def process(frame, lower=(15, 100, 100), upper=(35, 255, 255),
+def process(frame, mask=None, hsv=None,
+            lower=(15, 100, 100), upper=(35, 255, 255),
             min_radius_prop=0.0625, min_area_prop=0.0625,
             fov=75, focal_length=208.5):
 
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV, dst=hsv)
 
     # construct a mask for the colour "yellow", then perform
     # a series of dilations and erosions to remove any small
     # blobs left in the mask
-    mask = cv2.inRange(hsv, lower, upper)
-    cv2.erode(mask, None, mask)
-    cv2.dilate(mask, None, mask)
+    mask = cv2.inRange(hsv, lower, upper, dst=mask)
+    cv2.erode(mask, None, dst=mask)
+    cv2.dilate(mask, None, dst=mask)
 
     # find resolution of mask/image
     height, width = mask.shape
