@@ -48,7 +48,7 @@ def main():
 
 def process(frame: np.ndarray, mask: np.ndarray = None, hsv: np.ndarray = None, *,
             lower=(20, 125, 125), upper=(35, 255, 255),
-            min_area_prop=1/24, focal_length=208.5):
+            min_area_prop=1/64, focal_length=208.5):
     """Find cubes using our vision algorithm.
 
     Args
